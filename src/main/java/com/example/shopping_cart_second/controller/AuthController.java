@@ -49,7 +49,7 @@ public class AuthController extends Exception{
 	AuthService authService;
 	
 	@PostMapping("/signin")
-	public BaseResponse<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws Exception {
+	public BaseResponse<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws EmployeeServiceException, Exception {
 
 		return authService.authenticateUser(loginRequest);
 //		JwtResponse jwtResponse=authService.authenticateUser(loginRequest);

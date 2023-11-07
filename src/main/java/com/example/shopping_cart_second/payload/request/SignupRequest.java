@@ -19,7 +19,7 @@ public class SignupRequest {
   private Set<String> role;
 
   @NotBlank
-  @Size(min = 6, max = 40)
+  @Size(min = 6, max = 40,message = "the password should 6 to 40 characters")
   private String password;
 
   public String getUsername() {

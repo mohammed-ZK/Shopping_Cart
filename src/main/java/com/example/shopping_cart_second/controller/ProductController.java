@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
+import com.example.shopping_cart_second.Exception.EmployeeServiceException;
+import com.example.shopping_cart_second.dto.ProductDto;
 import com.example.shopping_cart_second.entity.Product;
-import com.example.shopping_cart_second.service.CartService;
 import com.example.shopping_cart_second.service.ProductService;
 
 @RestController
@@ -29,20 +30,18 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 
-	@Autowired
-	private CartService cartService;
 
 	@PostMapping("/product")
 	@PreAuthorize("hasRole('ADMIN')")
-	public BaseResponse<Product> insert(@RequestBody Product products) throws Exception {
-		BaseResponse<Product> baseResponse = productService.insert(products);
+	public BaseResponse<ProductDto> insert(@RequestBody Product products) throws EmployeeServiceException {
+		BaseResponse<ProductDto> baseResponse = productService.insert(products);
 		return baseResponse;
 	}
 
 	@GetMapping("/products")
-	@PreAuthorize("hasRole('ADMIN')")
-	public BaseResponse<List<Product>> getMyProduct() throws Exception {
-		BaseResponse<List<Product>> baseResponse = new BaseResponse<>();
+	@PreAuthorize("hasRole('USER')")
+	public BaseResponse<List<ProductDto>> getMyProduct() throws Exception {
+		BaseResponse<List<ProductDto>> baseResponse = new BaseResponse<>();
 		baseResponse.setData(productService.getMyProduct());
 		return baseResponse;
 	}

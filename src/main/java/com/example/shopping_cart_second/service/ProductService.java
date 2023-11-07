@@ -2,22 +2,19 @@ package com.example.shopping_cart_second.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
 import com.example.shopping_cart_second.Exception.EmployeeServiceException;
+import com.example.shopping_cart_second.dto.ProductDto;
 import com.example.shopping_cart_second.entity.Cart;
 import com.example.shopping_cart_second.entity.Product;
-import com.example.shopping_cart_second.entity.User;
 import com.example.shopping_cart_second.repository.CartRepository;
 import com.example.shopping_cart_second.repository.ProductRepository;
 
@@ -32,14 +29,18 @@ public class ProductService {
 	@Autowired
 	private CartRepository cartRepository;
 
-	public BaseResponse<Product> insert(Product products) throws EmployeeServiceException {
+	public BaseResponse<ProductDto> insert(Product products) throws EmployeeServiceException {
 
 		try {
-
-			Product pro2 = productRepository.save(products);
+			Product product = productRepository.save(products);
+			ProductDto productDto = new ProductDto();
+			productDto.setId(product.getId());
+			productDto.setDescription(product.getDescription());
+			productDto.setName(product.getName());
+			productDto.setPrice(product.getPrice());
 			log.info("======>" + products.getName());
-			BaseResponse<Product> baseResponse = new BaseResponse<>();
-			baseResponse.setData(pro2);
+			BaseResponse<ProductDto> baseResponse = new BaseResponse<>();
+			baseResponse.setData(productDto);
 			return baseResponse;
 		} catch (Exception e) {
 			throw new EmployeeServiceException("the name is exited");
@@ -47,8 +48,20 @@ public class ProductService {
 
 	}
 
-	public List<Product> getMyProduct() throws Exception {
-		return productRepository.findAll();
+	public List<ProductDto> getMyProduct() throws Exception {
+		
+		List<Product> products =productRepository.findAll();
+		List<ProductDto> productDtos=new ArrayList<>();
+		for (Product product : products) {
+			ProductDto productDto=new ProductDto();
+			productDto.setId(product.getId());
+			productDto.setDescription(product.getDescription());
+			productDto.setName(product.getName());
+			productDto.setPrice(product.getPrice());
+			productDtos.add(productDto);
+		}
+		
+		return productDtos;
 	}
 
 	public BaseResponse<Product> updateProduct(Product product, Long id) {
@@ -65,88 +78,59 @@ public class ProductService {
 		BaseResponse<Product> baseResponse = new BaseResponse<>();
 		baseResponse.setData(product2);
 		return baseResponse;
-////		try {
-//		Cart cart = cartRepository.findById(id).get();
-//		if (cart != null) {
-//
-//			throw new Exception();
-//		}
-//
-//		List<BigDecimal> invoices = new LinkedList<>();
-//		Product product2 = productRepository.findByName(product.getName());
-//		if (product2.equals(null)) {
-//			throw new Exception();
-//		}
-//		products.add(product2);
-//		BigDecimal Sum = cart.getTotalprice();
-//		invoices.add(product2.getPrice());
-//		invoices.add(Sum);
-//		Sum = invoices.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-////		cart.setProducts(products);
-//		cart.setTotalprice(Sum);
-//		cartRepository.save(cart);
-////		} catch (CartIdNotFoundException e) {
-////			throw new CartIdNotFoundException();
-////		}
 	}
-//
 
 	public BaseResponse<Void> deleteProduct(Long id) {
 
 		productRepository.deleteById(id);
 		return new BaseResponse<>();
 	}
-	
-	public BaseResponse<Void> addProductToCart(Long id1,Long id2){
-		Cart cart=cartRepository.findById(id1).get();
-		log.info("=====>"+id1);
-		Product product=productRepository.findById(id2).get();
-		log.info("=====>"+id2);
+
+	public BaseResponse<Void> addProductToCart(Long id1, Long id2) {
+		Cart cart = cartRepository.findById(id1).get();
+		log.info("=====>" + id1);
+		Product product = productRepository.findById(id2).get();
+		log.info("=====>" + id2);
 		BigDecimal Sum = cart.getTotalprice();
-		log.info("=====>"+Sum);
+		log.info("=====>" + Sum);
 		List<BigDecimal> invoices = new LinkedList<>();
-		List<Product> list=new ArrayList<>();
+		List<Product> list = new ArrayList<>();
 		invoices.add(product.getPrice());
 		invoices.add(Sum);
 		Sum = invoices.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 		cart.setTotalprice(Sum);
-		log.info("=====>"+Sum);
+		log.info("=====>" + Sum);
 		list.add(product);
-		List<Product> list2= cart.getProducts();
+		List<Product> list2 = cart.getProducts();
 		for (Product product2 : list2) {
-			list.add(product2);	
+			list.add(product2);
 		}
 		cart.setProducts(list);
-		
+
 		cartRepository.save(cart);
-		
+
 //		return new BaseResponse<>();
 		return null;
 	}
-	public BaseResponse<Void> deleteProductFromCart(Long id1,Long id2){
-		Cart cart=cartRepository.findById(id1).get();
-		log.info("==========>"+id1);
-		List<Product> products= cart.getProducts();
-		log.info("==========>"+id2);
+
+	public BaseResponse<Void> deleteProductFromCart(Long id1, Long id2) {
+		Cart cart = cartRepository.findById(id1).get();
+		log.info("==========>" + id1);
+		List<Product> products = cart.getProducts();
+		log.info("==========>" + id2);
 		for (Product product : products) {
-			log.info("======>"+product.getName());
+			log.info("======>" + product.getName());
 		}
-		
-		products.removeIf(id->id.getId()==id2);
-//		for (Product product : products) {
-////			if(product.getId()==id2) {
-//			log.info("======>"+product.getName());
-////			}
-//		}
+
+		products.removeIf(id -> id.getId() == id2);
+
 		for (Product product : products) {
-			log.info("======>"+product.getName());
+			log.info("======>" + product.getName());
 		}
-		
+
 		cart.setProducts(products);
 		cartRepository.save(cart);
-	
-		
-		
+
 		return null;
 	}
 }

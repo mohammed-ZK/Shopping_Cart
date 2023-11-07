@@ -1,17 +1,19 @@
 package com.example.shopping_cart_second.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
+import com.example.shopping_cart_second.Exception.EmployeeServiceException;
+import com.example.shopping_cart_second.dto.CartDto;
 import com.example.shopping_cart_second.entity.Cart;
 import com.example.shopping_cart_second.entity.User;
 import com.example.shopping_cart_second.repository.CartRepository;
@@ -32,9 +34,7 @@ public class CartService {
 	@Autowired
 	JwtUtils jwtUtils;
 
-//	final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-	public BaseResponse<Cart> insert() throws Exception {
+	public Long insert() throws Exception {
 		Cart cart = new Cart();
 
 		User user = new User();
@@ -46,16 +46,24 @@ public class CartService {
 		cart.setTotalprice(BigDecimal.ZERO);
 
 		Cart cart2 = cartRepository.save(cart);
-		BaseResponse<Cart> baseResponse = new BaseResponse<>();
-		baseResponse.setData(cart2);
-		return baseResponse;
 
-//		return new BaseResponse<>();
+		return cart2.getId();
 	}
 
-	public ResponseEntity<List<Cart>> getMyCart() throws Exception {
-//		Long id_cart = ;
-		return ResponseEntity.ok(cartRepository.findAll());
+	public List<CartDto> getCarts() throws Exception {
+		
+		List<Cart> carts=cartRepository.findAll();
+		List<CartDto> cartDtos=new ArrayList<>();
+		for (Cart cart : carts) {
+			CartDto cartDto=new CartDto();
+			cartDto.setId(cart.getId());
+			cartDto.setProducts(cart.getProducts());
+			cartDto.setTotalprice(cart.getTotalprice());
+			cartDtos.add(cartDto);
+		}
+		
+		
+		return cartDtos;
 	}
 
 	public BaseResponse<Void> deleteCart(Long id) throws Exception {
@@ -63,14 +71,27 @@ public class CartService {
 		return new BaseResponse<>();
 	}
 
-	public BaseResponse<Cart> getCart(Long id) throws Exception {
+	public BaseResponse<CartDto> getCart(Long id) throws Exception {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepository.findByUsername(authentication.getName()).get();
+		Long idUser = user.getId();
+		log.info("====>" + user.getId());
+
 		Cart cart = cartRepository.findById(id).get();
 		log.info("=======>" + cart.getId().toString());
-
-		BaseResponse<Cart> baseResponse = new BaseResponse<>();
-		baseResponse.setData(cart);
-		return baseResponse;
-
+		if (cart.getUser().getId() != idUser) {
+			throw new EmployeeServiceException();
+		} else {
+			CartDto cartDto =new CartDto();
+			cartDto.setId(cart.getId());
+			cartDto.setProducts(cart.getProducts());
+			cartDto.setTotalprice(cart.getTotalprice());
+			BaseResponse<CartDto> baseResponse = new BaseResponse<>();
+			baseResponse.setData(cartDto);
+			return baseResponse;
+		}
+		
 	}
 
 }

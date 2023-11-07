@@ -48,12 +48,17 @@ public class AuthService {
 	@Autowired
 	JwtUtils jwtUtils;
 
-	public BaseResponse<JwtResponse> authenticateUser(LoginRequest loginRequest) throws Exception {
+	public BaseResponse<JwtResponse> authenticateUser(LoginRequest loginRequest) throws EmployeeServiceException, Exception{
 
 		log.info("hello now well be found user");
-
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+		String username=loginRequest.getUsername();
+		log.info("hello found user1 :"+username);
+//		userRepository.findByUsername(username).orElseThrow(()->new EmployeeServiceException("the name is not fund"));
+		String password=loginRequest.getPassword();
+		log.info("hello found user"+password);
+		UsernamePasswordAuthenticationToken itemToken= new UsernamePasswordAuthenticationToken(username, password);
+		log.info("hello found user"+itemToken);
+		Authentication authentication = authenticationManager.authenticate(itemToken);
 
 		log.info("hello found user");
 
