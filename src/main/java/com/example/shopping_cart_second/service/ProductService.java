@@ -15,6 +15,8 @@ import com.example.shopping_cart_second.Exception.EmployeeServiceException;
 import com.example.shopping_cart_second.dto.ProductDto;
 import com.example.shopping_cart_second.entity.Cart;
 import com.example.shopping_cart_second.entity.Product;
+import com.example.shopping_cart_second.mapper.ProductMapper;
+import com.example.shopping_cart_second.mapper.ProductMapperImpl;
 import com.example.shopping_cart_second.repository.CartRepository;
 import com.example.shopping_cart_second.repository.ProductRepository;
 
@@ -28,16 +30,14 @@ public class ProductService {
 
 	@Autowired
 	private CartRepository cartRepository;
+	
+	private ProductMapper productMapper=new ProductMapperImpl();
 
 	public BaseResponse<ProductDto> insert(Product products) throws EmployeeServiceException {
 
 		try {
 			Product product = productRepository.save(products);
-			ProductDto productDto = new ProductDto();
-			productDto.setId(product.getId());
-			productDto.setDescription(product.getDescription());
-			productDto.setName(product.getName());
-			productDto.setPrice(product.getPrice());
+			ProductDto productDto = productMapper.mapToDto(product);
 			log.info("======>" + products.getName());
 			BaseResponse<ProductDto> baseResponse = new BaseResponse<>();
 			baseResponse.setData(productDto);
@@ -53,11 +53,11 @@ public class ProductService {
 		List<Product> products =productRepository.findAll();
 		List<ProductDto> productDtos=new ArrayList<>();
 		for (Product product : products) {
-			ProductDto productDto=new ProductDto();
-			productDto.setId(product.getId());
-			productDto.setDescription(product.getDescription());
-			productDto.setName(product.getName());
-			productDto.setPrice(product.getPrice());
+			ProductDto productDto=productMapper.mapToDto(product);
+//			productDto.setId(product.getId());
+//			productDto.setDescription(product.getDescription());
+//			productDto.setName(product.getName());
+//			productDto.setPrice(product.getPrice());
 			productDtos.add(productDto);
 		}
 		
@@ -81,7 +81,6 @@ public class ProductService {
 	}
 
 	public BaseResponse<Void> deleteProduct(Long id) {
-
 		productRepository.deleteById(id);
 		return new BaseResponse<>();
 	}

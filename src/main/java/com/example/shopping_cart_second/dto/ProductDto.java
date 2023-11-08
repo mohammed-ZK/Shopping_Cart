@@ -2,9 +2,7 @@ package com.example.shopping_cart_second.dto;
 
 import java.math.BigDecimal;
 
-import com.example.shopping_cart_second.base.BaseDto;
-
-public class ProductDto extends BaseDto<Long> {
+public class ProductDto {
 	
 	private Long id;
 	
@@ -13,8 +11,6 @@ public class ProductDto extends BaseDto<Long> {
 	private String description;
 
 	private BigDecimal price;
-
-	
 	
 	public Long getId() {
 		return id;

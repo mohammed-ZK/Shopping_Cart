@@ -1,10 +1,6 @@
 package com.example.shopping_cart_second.base;
 
-import lombok.Getter;
-import lombok.Setter;
 
-@Setter
-@Getter
 public abstract class BaseDto<T> {
 	private T id;
 

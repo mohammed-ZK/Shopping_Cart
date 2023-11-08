@@ -4,13 +4,22 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.shopping_cart_second.base.BaseDto;
 import com.example.shopping_cart_second.entity.Product;
 
-public class CartDto extends BaseDto<Long> {
+public class CartDto {
 
+	
+	private Long id;
 	private BigDecimal totalprice;
 	private List<Product> products = new ArrayList<>();
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public BigDecimal getTotalprice() {
 		return totalprice;

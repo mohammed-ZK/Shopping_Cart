@@ -16,6 +16,9 @@ import com.example.shopping_cart_second.Exception.EmployeeServiceException;
 import com.example.shopping_cart_second.dto.CartDto;
 import com.example.shopping_cart_second.entity.Cart;
 import com.example.shopping_cart_second.entity.User;
+import com.example.shopping_cart_second.mapper.CartMapper;
+import com.example.shopping_cart_second.mapper.CartMapperImpl;
+import com.example.shopping_cart_second.mapper.UserMapper;
 import com.example.shopping_cart_second.repository.CartRepository;
 import com.example.shopping_cart_second.repository.UserRepository;
 import com.example.shopping_cart_second.security.jwt.JwtUtils;
@@ -34,6 +37,8 @@ public class CartService {
 	@Autowired
 	JwtUtils jwtUtils;
 
+	private CartMapper cartMapper =new CartMapperImpl();
+
 	public Long insert() throws Exception {
 		Cart cart = new Cart();
 
@@ -51,18 +56,15 @@ public class CartService {
 	}
 
 	public List<CartDto> getCarts() throws Exception {
-		
-		List<Cart> carts=cartRepository.findAll();
-		List<CartDto> cartDtos=new ArrayList<>();
+
+		List<Cart> carts = cartRepository.findAll();
+		List<CartDto> cartDtos = new ArrayList<>();
 		for (Cart cart : carts) {
-			CartDto cartDto=new CartDto();
-			cartDto.setId(cart.getId());
-			cartDto.setProducts(cart.getProducts());
-			cartDto.setTotalprice(cart.getTotalprice());
+			log.info("=======>" + cart.getUser().getEmail());
+			CartDto cartDto = cartMapper.mapToDto(cart);
+			log.info("=======>" + cartDto.getTotalprice());
 			cartDtos.add(cartDto);
 		}
-		
-		
 		return cartDtos;
 	}
 
@@ -83,15 +85,12 @@ public class CartService {
 		if (cart.getUser().getId() != idUser) {
 			throw new EmployeeServiceException();
 		} else {
-			CartDto cartDto =new CartDto();
-			cartDto.setId(cart.getId());
-			cartDto.setProducts(cart.getProducts());
-			cartDto.setTotalprice(cart.getTotalprice());
+			CartDto cartDto = cartMapper.mapToDto(cart);
 			BaseResponse<CartDto> baseResponse = new BaseResponse<>();
 			baseResponse.setData(cartDto);
 			return baseResponse;
 		}
-		
+
 	}
 
 }

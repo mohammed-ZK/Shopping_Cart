@@ -34,7 +34,7 @@ public class ExceptionHandlerControllerAdvice {
 	public @ResponseBody BaseResponse<Void> Exception(final Exception exception, final HttpServletRequest request) {
 
 		BaseResponse<Void> error = new BaseResponse<Void>();
-		error.setMessage("Error in enter");
+		error.setMessage(exception.getMessage());
 		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 		return error;
 	}
