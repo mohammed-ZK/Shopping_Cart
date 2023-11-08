@@ -3,6 +3,7 @@ package com.example.shopping_cart_second.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,11 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
+import com.example.shopping_cart_second.Exception.ErrorInInsertException;
+import com.example.shopping_cart_second.Exception.UserNotAuthenticatedException;
+import com.example.shopping_cart_second.Exception.UserNotFoundException;
 import com.example.shopping_cart_second.dto.CartDto;
 import com.example.shopping_cart_second.service.CartService;
 
 @RestController
 @RequestMapping("/api/carts")
+@PreAuthorize("hasRole('ADMIN')")
 public class CartController {
 
 	@Autowired
@@ -24,14 +29,14 @@ public class CartController {
 
 	@PostMapping()
 	@PreAuthorize("hasRole('USER')")
-	public BaseResponse<Long> insert() throws Exception {
+	public ResponseEntity<BaseResponse<Long>> insert() throws ErrorInInsertException,UserNotFoundException,UserNotAuthenticatedException {
 		BaseResponse<Long> baseResponse = new BaseResponse<>();
 		baseResponse.setData(cartService.insert());
-		return baseResponse;
+		return ResponseEntity.ok(baseResponse) ;
 	}
 
 	@GetMapping()
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	public List<CartDto> getCarts() throws Exception {
 		return cartService.getCarts();
 	}
@@ -48,6 +53,5 @@ public class CartController {
 	public BaseResponse<Void> deleteCart(@PathVariable Long id) throws Exception {
 		cartService.deleteCart(id);
 		return new BaseResponse<>();
-//		throw new Exception();
 	}
 }

@@ -13,12 +13,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
 import com.example.shopping_cart_second.Exception.EmployeeServiceException;
+import com.example.shopping_cart_second.Exception.ErrorInInsertException;
+import com.example.shopping_cart_second.Exception.UserNotAuthenticatedException;
+import com.example.shopping_cart_second.Exception.UserNotFoundException;
 import com.example.shopping_cart_second.dto.CartDto;
 import com.example.shopping_cart_second.entity.Cart;
 import com.example.shopping_cart_second.entity.User;
 import com.example.shopping_cart_second.mapper.CartMapper;
 import com.example.shopping_cart_second.mapper.CartMapperImpl;
-import com.example.shopping_cart_second.mapper.UserMapper;
 import com.example.shopping_cart_second.repository.CartRepository;
 import com.example.shopping_cart_second.repository.UserRepository;
 import com.example.shopping_cart_second.security.jwt.JwtUtils;
@@ -37,22 +39,34 @@ public class CartService {
 	@Autowired
 	JwtUtils jwtUtils;
 
-	private CartMapper cartMapper =new CartMapperImpl();
+	private CartMapper cartMapper = new CartMapperImpl();
 
-	public Long insert() throws Exception {
+	public Long insert() throws UserNotFoundException {
 		Cart cart = new Cart();
 
 		User user = new User();
 
+		log.info("===>1");
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		log.info("===>2" + authentication.isAuthenticated());
 		String string = authentication.getName();
+		
 		user = userRepository.findByUsername(string).get();
+
 		cart.setUser(user);
 		cart.setTotalprice(BigDecimal.ZERO);
 
-		Cart cart2 = cartRepository.save(cart);
+		try {
+			Cart cart3 = cartRepository.save(cart);
+			return cart3.getId();
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw  new UserNotFoundException("The User have cart");
+		}
 
-		return cart2.getId();
+		
 	}
 
 	public List<CartDto> getCarts() throws Exception {
@@ -69,8 +83,29 @@ public class CartService {
 	}
 
 	public BaseResponse<Void> deleteCart(Long id) throws Exception {
-		cartRepository.deleteById(id);
-		return new BaseResponse<>();
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepository.findByUsername(authentication.getName()).get();
+		Long idUser = user.getId();
+		log.info("====>" + user.getRoles().toString());
+
+		Cart cart = cartRepository.findById(id).get();
+		log.info("=======>" + cart.getId());
+		if (cart.getUser().getId() != idUser) {
+			throw new EmployeeServiceException("The User is Access Dinay");
+		} else {
+			cartRepository.deleteById(id);
+			return new BaseResponse<>();
+//			CartDto cartDto = cartMapper.mapToDto(cart);
+//			BaseResponse<CartDto> baseResponse = new BaseResponse<>();
+//			baseResponse.setData(cartDto);
+//			return baseResponse;
+		}
+		
+		
+		
+//		cartRepository.deleteById(id);
+//		return new BaseResponse<>();
 	}
 
 	public BaseResponse<CartDto> getCart(Long id) throws Exception {
@@ -83,7 +118,7 @@ public class CartService {
 		Cart cart = cartRepository.findById(id).get();
 		log.info("=======>" + cart.getId().toString());
 		if (cart.getUser().getId() != idUser) {
-			throw new EmployeeServiceException();
+			throw new EmployeeServiceException("The User is Access Dinay");
 		} else {
 			CartDto cartDto = cartMapper.mapToDto(cart);
 			BaseResponse<CartDto> baseResponse = new BaseResponse<>();

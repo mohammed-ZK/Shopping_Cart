@@ -2,6 +2,8 @@ package com.example.shopping_cart_second.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
-import com.example.shopping_cart_second.Exception.EmployeeServiceException;
+import com.example.shopping_cart_second.Exception.ProductException;
 import com.example.shopping_cart_second.dto.ProductDto;
 import com.example.shopping_cart_second.entity.Product;
 import com.example.shopping_cart_second.service.ProductService;
@@ -33,35 +35,36 @@ public class ProductController {
 
 	@PostMapping("/product")
 	@PreAuthorize("hasRole('ADMIN')")
-	public BaseResponse<ProductDto> insert(@RequestBody Product products) throws EmployeeServiceException {
+	public BaseResponse<ProductDto> insert(@RequestBody @Valid Product products) throws ProductException{
+		log.info("=====>1");
 		BaseResponse<ProductDto> baseResponse = productService.insert(products);
 		return baseResponse;
 	}
 
 	@GetMapping("/products")
 	@PreAuthorize("hasRole('USER')")
-	public BaseResponse<List<ProductDto>> getMyProduct() throws Exception {
+	public BaseResponse<List<ProductDto>> getProducts() {
 		BaseResponse<List<ProductDto>> baseResponse = new BaseResponse<>();
-		baseResponse.setData(productService.getMyProduct());
+		baseResponse.setData(productService.getProducts());
 		return baseResponse;
 	}
 
 	@PutMapping("/products/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
-	public BaseResponse<Product> updateProduct(@RequestBody Product products, @PathVariable Long id) {
+	public BaseResponse<Product> updateProduct(@RequestBody @Valid Product products, @PathVariable Long id) {
 		productService.updateProduct(products, id);
 		return new BaseResponse<Product>();
 	}
 
 	@DeleteMapping("/products/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
-	public BaseResponse<Void> deleteProduct(@PathVariable Long id) {
+	public BaseResponse<Void> deleteProduct(@PathVariable Long id) throws ProductException {
 		return productService.deleteProduct(id);
 	}
 
 	@PostMapping("/{id1}/products/{id2}")
 	@PreAuthorize("hasRole('USER')")
-	public BaseResponse<Void> addProductToCart(@PathVariable Long id1, @PathVariable Long id2) {
+	public BaseResponse<Void> addProductToCart(@PathVariable Long id1, @PathVariable Long id2) throws ProductException {
 		log.info("=====>");
 		productService.addProductToCart(id1, id2);
 		return new BaseResponse<Void>();
@@ -69,7 +72,7 @@ public class ProductController {
 
 	@DeleteMapping("/{id1}/products/{id2}")
 	@PreAuthorize("hasRole('USER')")
-	public BaseResponse<Void> deleteProductFromCart(@PathVariable Long id1, @PathVariable Long id2) {
+	public BaseResponse<Void> deleteProductFromCart(@PathVariable Long id1, @PathVariable Long id2) throws ProductException {
 		log.info("=====>");
 		productService.deleteProductFromCart(id1, id2);
 		return new BaseResponse<Void>();

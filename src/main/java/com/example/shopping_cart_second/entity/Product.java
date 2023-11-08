@@ -8,7 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Range;
 
@@ -20,29 +22,17 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotBlank
+	@NotBlank(message = "the name is blank")
 	@Column(unique = true)
-//	@UniqueElements(message = "www.com")
 	private String name;
 
-	@NotBlank
+	@NotBlank(message = "the description is blank")
 	private String description;
 
-//	@NotBlank
+	@Valid
 	@Range(min = 1, max = 100000, message = "most between 1 to 100000")
 //	@Currency("EUR")
 	private BigDecimal price;
-
-//	@ManyToOne
-//	private Cart cart = new Cart();
-//
-//	public Cart getCart() {
-//		return cart;
-//	}
-//
-//	public void setCart(Cart cart) {
-//		this.cart = cart;
-//	}
 
 	public Product(Long id, String name, String description, BigDecimal price) {
 		super();

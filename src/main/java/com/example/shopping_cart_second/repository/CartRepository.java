@@ -16,4 +16,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 //	@Transactional
 //	@Query(nativeQuery = true, value = "select * from users u inner join carts c on u.:id=c.:user_id")
 //	Cart getMyCart(@Param("id_cart") Long id_cart,@Param("id_user") Long id_user);
+	
+	Cart findByUser_id(Long id);
 }

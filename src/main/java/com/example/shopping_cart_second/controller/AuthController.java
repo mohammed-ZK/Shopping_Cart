@@ -52,10 +52,6 @@ public class AuthController extends Exception{
 	public BaseResponse<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws EmployeeServiceException, Exception {
 
 		return authService.authenticateUser(loginRequest);
-//		JwtResponse jwtResponse=authService.authenticateUser(loginRequest);
-//		JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-		
-//		return ResponseEntity.ok(jwtResponse);
 
 	}
 

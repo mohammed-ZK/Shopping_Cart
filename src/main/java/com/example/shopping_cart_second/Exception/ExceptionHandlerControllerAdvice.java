@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,6 +26,72 @@ public class ExceptionHandlerControllerAdvice {
 
 		BaseResponse<Void> error = new BaseResponse<Void>();
 		error.setMessage(exception.getMessage());
+		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+		return error;
+	}
+
+	@ExceptionHandler(ProductException.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody BaseResponse<Void> ProductException(final ProductException exception,
+			final HttpServletRequest request) {
+
+		BaseResponse<Void> error = new BaseResponse<Void>();
+		error.setMessage(exception.getMessage());
+		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+		return error;
+	}
+
+	@ExceptionHandler(NotGenerateTokenException.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody BaseResponse<Void> NotGenerateTokenException(final NotGenerateTokenException exception,
+			final HttpServletRequest request) {
+
+		BaseResponse<Void> error = new BaseResponse<Void>();
+		error.setMessage(exception.getMessage());
+		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+		return error;
+	}
+
+	@ExceptionHandler(UserNotExpiredException.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody BaseResponse<Void> UserNotExpiredException(final UserNotExpiredException exception,
+			final HttpServletRequest request) {
+
+		BaseResponse<Void> error = new BaseResponse<Void>();
+		error.setMessage(exception.getMessage());
+		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+		return error;
+	}
+
+	@ExceptionHandler(UserNotFoundException.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody BaseResponse<Void> UserNotFoundException(final UserNotFoundException exception,
+			final HttpServletRequest request) {
+
+		BaseResponse<Void> error = new BaseResponse<Void>();
+		error.setMessage(exception.getMessage());
+		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+		return error;
+	}
+
+	@ExceptionHandler(UserNotAuthenticatedException.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody BaseResponse<Void> UserNotAuthizException(final UserNotAuthenticatedException exception,
+			final HttpServletRequest request) {
+
+		BaseResponse<Void> error = new BaseResponse<Void>();
+		error.setMessage("User not Authenticated");
+		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+		return error;
+	}
+
+	@ExceptionHandler(ErrorInInsertException.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody BaseResponse<Void> ErrorInInsertException(final ErrorInInsertException exception,
+			final HttpServletRequest request) {
+
+		BaseResponse<Void> error = new BaseResponse<Void>();
+		error.setMessage("Not Authenticated");
 		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 		return error;
 	}

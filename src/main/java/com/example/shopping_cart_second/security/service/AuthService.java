@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
 import com.example.shopping_cart_second.Exception.EmployeeServiceException;
+import com.example.shopping_cart_second.Exception.NotGenerateTokenException;
+import com.example.shopping_cart_second.Exception.UserNotExpiredException;
+import com.example.shopping_cart_second.Exception.UserNotFoundException;
 import com.example.shopping_cart_second.entity.ERole;
 import com.example.shopping_cart_second.entity.Role;
 import com.example.shopping_cart_second.entity.User;
@@ -48,31 +51,37 @@ public class AuthService {
 	@Autowired
 	JwtUtils jwtUtils;
 
-	public BaseResponse<JwtResponse> authenticateUser(LoginRequest loginRequest) throws EmployeeServiceException, Exception{
+	public BaseResponse<JwtResponse> authenticateUser(LoginRequest loginRequest)
+			throws UserNotExpiredException, NotGenerateTokenException, EmployeeServiceException, UserNotFoundException {
 
 		log.info("hello now well be found user");
-		String username=loginRequest.getUsername();
-		log.info("hello found user1 :"+username);
-//		userRepository.findByUsername(username).orElseThrow(()->new EmployeeServiceException("the name is not fund"));
-		String password=loginRequest.getPassword();
-		log.info("hello found user"+password);
-		UsernamePasswordAuthenticationToken itemToken= new UsernamePasswordAuthenticationToken(username, password);
-		log.info("hello found user"+itemToken);
-		Authentication authentication = authenticationManager.authenticate(itemToken);
+		String username = loginRequest.getUsername();
+		log.info("hello found user1 :" + username);
+		String password = loginRequest.getPassword();
+		log.info("hello found user" + password);
+		UsernamePasswordAuthenticationToken itemToken = new UsernamePasswordAuthenticationToken(username, password);
+		log.info("hello found user" + itemToken);
+		try {
+			Authentication authentication = authenticationManager.authenticate(itemToken);	
 
-		log.info("hello found user");
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
+			log.info("hello found user");
 
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-				.collect(Collectors.toList());
-		JwtResponse jwtResponse = new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(),
-				userDetails.getEmail(), roles);
-		BaseResponse<JwtResponse> baseResponse = new BaseResponse<>();
-		baseResponse.setData(jwtResponse);
-		return baseResponse;
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			String jwt = jwtUtils.generateJwtToken(authentication);
+
+			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+			List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+					.collect(Collectors.toList());
+			JwtResponse jwtResponse = new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(),
+					userDetails.getEmail(), roles);
+			BaseResponse<JwtResponse> baseResponse = new BaseResponse<>();
+			baseResponse.setData(jwtResponse);
+			return baseResponse;
+		} catch (Exception e) {
+			throw new UserNotFoundException("Username or Password is faild");
+		}
+		
 	}
 
 //	@Bean
@@ -117,7 +126,6 @@ public class AuthService {
 			user.setRoles(roles);
 			userRepository.save(user);
 		} catch (Exception e) {
-			// TODO: handle exception
 			new EmployeeServiceException(e.getMessage());
 		}
 

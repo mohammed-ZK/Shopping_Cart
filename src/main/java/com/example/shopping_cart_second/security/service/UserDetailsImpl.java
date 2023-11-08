@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.example.shopping_cart_second.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -52,11 +53,11 @@ public class UserDetailsImpl implements UserDetails {
 		return authorities;
 	}
 
-	public Long getId() throws Exception {
+	public Long getId() throws UsernameNotFoundException {
 		return id;
 	}
 
-	public String getEmail() throws Exception {
+	public String getEmail() throws UsernameNotFoundException {
 		return email;
 	}
 
