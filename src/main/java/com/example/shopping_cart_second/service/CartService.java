@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
 import com.example.shopping_cart_second.Exception.EmployeeServiceException;
-import com.example.shopping_cart_second.Exception.ErrorInInsertException;
-import com.example.shopping_cart_second.Exception.UserNotAuthenticatedException;
 import com.example.shopping_cart_second.Exception.UserNotFoundException;
 import com.example.shopping_cart_second.dto.CartDto;
 import com.example.shopping_cart_second.entity.Cart;

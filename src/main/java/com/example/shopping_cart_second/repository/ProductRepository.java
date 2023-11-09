@@ -9,8 +9,6 @@ import com.example.shopping_cart_second.entity.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>{
-//	public Product getByName(String name);
-//	@Query(nativeQuery = true,value = "select * from products where name=:name")
 	Product findByName(@Param("name") String name);
 	
 	
