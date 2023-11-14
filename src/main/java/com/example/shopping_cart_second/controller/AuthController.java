@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
 import com.example.shopping_cart_second.Exception.EmployeeServiceException;
+import com.example.shopping_cart_second.dto.AuthDto;
 import com.example.shopping_cart_second.payload.request.LoginRequest;
 import com.example.shopping_cart_second.payload.request.SignupRequest;
 import com.example.shopping_cart_second.payload.response.JwtResponse;
@@ -49,9 +50,12 @@ public class AuthController extends Exception{
 	AuthService authService;
 	
 	@PostMapping("/signin")
-	public BaseResponse<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws EmployeeServiceException, Exception {
+	public BaseResponse<AuthDto> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws EmployeeServiceException, Exception {
 
-		return authService.authenticateUser(loginRequest);
+		BaseResponse<AuthDto> baseResponse=new BaseResponse<>();
+		baseResponse.setData(authService.authenticateUser(loginRequest));
+		
+		return baseResponse;
 
 	}
 

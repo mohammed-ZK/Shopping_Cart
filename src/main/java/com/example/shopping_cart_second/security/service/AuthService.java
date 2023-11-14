@@ -20,9 +20,12 @@ import com.example.shopping_cart_second.Exception.EmployeeServiceException;
 import com.example.shopping_cart_second.Exception.NotGenerateTokenException;
 import com.example.shopping_cart_second.Exception.UserNotExpiredException;
 import com.example.shopping_cart_second.Exception.UserNotFoundException;
+import com.example.shopping_cart_second.dto.AuthDto;
 import com.example.shopping_cart_second.entity.ERole;
 import com.example.shopping_cart_second.entity.Role;
 import com.example.shopping_cart_second.entity.User;
+import com.example.shopping_cart_second.mapper.AuthMapper;
+import com.example.shopping_cart_second.mapper.AuthMapperImpl;
 import com.example.shopping_cart_second.payload.request.LoginRequest;
 import com.example.shopping_cart_second.payload.request.SignupRequest;
 import com.example.shopping_cart_second.payload.response.JwtResponse;
@@ -37,21 +40,23 @@ public class AuthService {
 	private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
 	@Autowired
-	AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 
 	@Autowired
-	RoleRepository roleRepository;
+	private RoleRepository roleRepository;
 
 	@Autowired
-	PasswordEncoder encoder;
+	private PasswordEncoder encoder;
 
 	@Autowired
-	JwtUtils jwtUtils;
+	private JwtUtils jwtUtils;
+	
+	private AuthMapper authMapper=new AuthMapperImpl();
 
-	public BaseResponse<JwtResponse> authenticateUser(LoginRequest loginRequest)
+	public AuthDto authenticateUser(LoginRequest loginRequest)
 			throws UserNotExpiredException, NotGenerateTokenException, EmployeeServiceException, UserNotFoundException {
 
 		log.info("hello now well be found user");
@@ -77,7 +82,9 @@ public class AuthService {
 					userDetails.getEmail(), roles);
 			BaseResponse<JwtResponse> baseResponse = new BaseResponse<>();
 			baseResponse.setData(jwtResponse);
-			return baseResponse;
+			AuthDto authDto =new AuthDto();
+			authDto=authMapper.mapToDto(jwtResponse);
+			return authDto;
 		} catch (Exception e) {
 			throw new UserNotFoundException("Username or Password is faild");
 		}

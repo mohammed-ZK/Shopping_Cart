@@ -35,7 +35,7 @@ public class CartService {
 	private UserRepository userRepository;
 
 	@Autowired
-	JwtUtils jwtUtils;
+	private JwtUtils jwtUtils;
 
 	private CartMapper cartMapper = new CartMapperImpl();
 
