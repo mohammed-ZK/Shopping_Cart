@@ -17,7 +17,6 @@ import com.example.shopping_cart_second.Exception.EmployeeServiceException;
 import com.example.shopping_cart_second.dto.AuthDto;
 import com.example.shopping_cart_second.payload.request.LoginRequest;
 import com.example.shopping_cart_second.payload.request.SignupRequest;
-import com.example.shopping_cart_second.payload.response.JwtResponse;
 import com.example.shopping_cart_second.repository.RoleRepository;
 import com.example.shopping_cart_second.repository.UserRepository;
 import com.example.shopping_cart_second.security.jwt.JwtUtils;

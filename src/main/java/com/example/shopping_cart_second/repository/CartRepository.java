@@ -8,4 +8,5 @@ import com.example.shopping_cart_second.entity.Cart;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
 	Cart findByUser_id(Long id);
+	boolean existsByUser_Id(Long id);
 }

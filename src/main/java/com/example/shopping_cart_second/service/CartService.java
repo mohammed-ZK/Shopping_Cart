@@ -44,27 +44,24 @@ public class CartService {
 
 		User user = new User();
 
-		log.info("===>1");
+		log.info("before Auth get");
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		log.info("===>2" + authentication.isAuthenticated());
+		log.info("after Auth get" + authentication.isAuthenticated());
 		String string = authentication.getName();
-		
+
 		user = userRepository.findByUsername(string).get();
 
 		cart.setUser(user);
 		cart.setTotalprice(BigDecimal.ZERO);
 
-		try {
-			Cart cart3 = cartRepository.save(cart);
-			return cart3.getId();
-		} catch (Exception e) {
-			// TODO: handle exception
-			throw  new UserNotFoundException("The User have cart");
+		if (cartRepository.existsByUser_Id(user.getId())) {
+			throw new UserNotFoundException("The User has a cart");
+		} else {
+			return cartRepository.save(cart).getId();
 		}
 
-		
 	}
 
 	public List<CartDto> getCarts() throws Exception {
@@ -81,7 +78,7 @@ public class CartService {
 	}
 
 	public BaseResponse<Void> deleteCart(Long id) throws Exception {
-		
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = userRepository.findByUsername(authentication.getName()).get();
 		Long idUser = user.getId();
@@ -99,9 +96,7 @@ public class CartService {
 //			baseResponse.setData(cartDto);
 //			return baseResponse;
 		}
-		
-		
-		
+
 //		cartRepository.deleteById(id);
 //		return new BaseResponse<>();
 	}
