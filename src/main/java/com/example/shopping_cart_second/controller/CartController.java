@@ -36,14 +36,14 @@ public class CartController {
 	}
 
 	@GetMapping()
-//	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public List<CartDto> getCarts() throws Exception {
 		return cartService.getCarts();
 	}
 
 	@GetMapping("{id}")
 //	@PreAuthorize("hasRole('ADMIN')")
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public BaseResponse<CartDto> getCartById(@PathVariable Long id) throws Exception {
 		return cartService.getCart(id);
 	}

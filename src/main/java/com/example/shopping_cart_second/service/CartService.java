@@ -2,7 +2,9 @@ package com.example.shopping_cart_second.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,8 @@ import com.example.shopping_cart_second.Exception.EmployeeServiceException;
 import com.example.shopping_cart_second.Exception.UserNotFoundException;
 import com.example.shopping_cart_second.dto.CartDto;
 import com.example.shopping_cart_second.entity.Cart;
+import com.example.shopping_cart_second.entity.ERole;
+import com.example.shopping_cart_second.entity.Role;
 import com.example.shopping_cart_second.entity.User;
 import com.example.shopping_cart_second.mapper.CartMapper;
 import com.example.shopping_cart_second.mapper.CartMapperImpl;
@@ -91,14 +95,7 @@ public class CartService {
 		} else {
 			cartRepository.deleteById(id);
 			return new BaseResponse<>();
-//			CartDto cartDto = cartMapper.mapToDto(cart);
-//			BaseResponse<CartDto> baseResponse = new BaseResponse<>();
-//			baseResponse.setData(cartDto);
-//			return baseResponse;
 		}
-
-//		cartRepository.deleteById(id);
-//		return new BaseResponse<>();
 	}
 
 	public BaseResponse<CartDto> getCart(Long id) throws Exception {
@@ -110,13 +107,20 @@ public class CartService {
 
 		Cart cart = cartRepository.findById(id).get();
 		log.info("=======>" + cart.getId().toString());
-		if (cart.getUser().getId() != idUser) {
-			throw new EmployeeServiceException("The User is Access Dinay");
-		} else {
+		Set<Role> role = new HashSet<>();
+		Role role2 = new Role(ERole.ROLE_ADMIN);
+		role.add(role2);
+		log.info("=====>" + role.toString());
+		log.info("=====>" + cart.getUser().getRoles().contains(role2));
+		if (cart.getUser().getId() == idUser || cart.getUser().getRoles().equals(role)) {
+
 			CartDto cartDto = cartMapper.mapToDto(cart);
 			BaseResponse<CartDto> baseResponse = new BaseResponse<>();
 			baseResponse.setData(cartDto);
 			return baseResponse;
+
+		} else {
+			throw new EmployeeServiceException("The User isn`t Access");
 		}
 
 	}

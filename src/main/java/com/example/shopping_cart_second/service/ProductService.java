@@ -34,14 +34,14 @@ public class ProductService {
 	private ProductMapper productMapper = new ProductMapperImpl();
 
 	public BaseResponse<ProductDto> insert(Product products) throws ProductException {
-			log.info("======>" + products.getName());
+		log.info("======>" + products.getName());
 
-			Product product = productRepository.save(products);
-			ProductDto productDto = productMapper.mapToDto(product);
-			log.info("======>" + products.getName());
-			BaseResponse<ProductDto> baseResponse = new BaseResponse<>();
-			baseResponse.setData(productDto);
-			return baseResponse;
+		Product product = productRepository.save(products);
+		ProductDto productDto = productMapper.mapToDto(product);
+		log.info("======>" + products.getName());
+		BaseResponse<ProductDto> baseResponse = new BaseResponse<>();
+		baseResponse.setData(productDto);
+		return baseResponse;
 
 	}
 
@@ -73,15 +73,15 @@ public class ProductService {
 		return baseResponse;
 	}
 
-	public BaseResponse<Void> deleteProduct(Long id) throws ProductException{
+	public BaseResponse<Void> deleteProduct(Long id) throws ProductException {
 		try {
 
 			productRepository.deleteById(id);
-			return new BaseResponse<>();	
+			return new BaseResponse<>();
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new ProductException("the product is not found");
-		}	
+		}
 	}
 
 	public BaseResponse<Void> addProductToCart(Long id1, Long id2) throws ProductException {
@@ -109,7 +109,7 @@ public class ProductService {
 
 			cartRepository.save(cart);
 
-			return new BaseResponse<>();	
+			return new BaseResponse<>();
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new ProductException("the Cart or Product is not found");
@@ -124,12 +124,20 @@ public class ProductService {
 			log.info("==========>" + id1);
 			List<Product> products = cart.getProducts();
 			log.info("==========>" + id2);
+			
+			BigDecimal bigDecimal=BigDecimal.ZERO;
+			
 			for (Product product : products) {
 				log.info("======>" + product.getName());
+				if(id2==product.getId()) {
+					bigDecimal=product.getPrice();
+				}
 			}
 
 			products.removeIf(id -> id.getId() == id2);
 
+			cart.setTotalprice(cart.getTotalprice().subtract(bigDecimal));
+			
 			for (Product product : products) {
 				log.info("======>" + product.getName());
 			}
@@ -137,11 +145,11 @@ public class ProductService {
 			cart.setProducts(products);
 			cartRepository.save(cart);
 
-			return new BaseResponse<>();	
+			return new BaseResponse<>();
 		} catch (Exception e) {
 			// TODO: handle exception
 			throw new ProductException("the Cart or Product is not found");
 		}
-		
+
 	}
 }
