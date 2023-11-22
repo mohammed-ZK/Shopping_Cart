@@ -43,7 +43,7 @@ public class CartController {
 
 	@GetMapping("{id}")
 //	@PreAuthorize("hasRole('ADMIN')")
-	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+	@PreAuthorize("hasRole('USER')")
 	public BaseResponse<CartDto> getCartById(@PathVariable Long id) throws Exception {
 		return cartService.getCart(id);
 	}

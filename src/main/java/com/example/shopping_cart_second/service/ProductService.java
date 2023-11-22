@@ -8,6 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 import com.example.shopping_cart_second.Exception.BaseResponse;
@@ -21,6 +24,7 @@ import com.example.shopping_cart_second.repository.CartRepository;
 import com.example.shopping_cart_second.repository.ProductRepository;
 
 @Service
+@EnableCaching
 public class ProductService {
 
 	private static final Logger log = LoggerFactory.getLogger(ProductService.class);
@@ -33,6 +37,7 @@ public class ProductService {
 
 	private ProductMapper productMapper = new ProductMapperImpl();
 
+	@CacheEvict(key = "#root.methodName", value = "AllProoducts", allEntries = true)
 	public BaseResponse<ProductDto> insert(Product products) throws ProductException {
 		log.info("======>" + products.getName());
 
@@ -45,6 +50,7 @@ public class ProductService {
 
 	}
 
+	@Cacheable(key = "#root.methodName", value = "AllProoducts")
 	public List<ProductDto> getProducts() {
 
 		List<Product> products = productRepository.findAll();
@@ -73,6 +79,7 @@ public class ProductService {
 		return baseResponse;
 	}
 
+	@CacheEvict(key = "#root.methodName", value = "AllProoducts", allEntries = true)
 	public BaseResponse<Void> deleteProduct(Long id) throws ProductException {
 		try {
 
@@ -111,7 +118,6 @@ public class ProductService {
 
 			return new BaseResponse<>();
 		} catch (Exception e) {
-			// TODO: handle exception
 			throw new ProductException("the Cart or Product is not found");
 		}
 //		return null;
@@ -124,20 +130,20 @@ public class ProductService {
 			log.info("==========>" + id1);
 			List<Product> products = cart.getProducts();
 			log.info("==========>" + id2);
-			
-			BigDecimal bigDecimal=BigDecimal.ZERO;
-			
+
+			BigDecimal bigDecimal = BigDecimal.ZERO;
+
 			for (Product product : products) {
 				log.info("======>" + product.getName());
-				if(id2==product.getId()) {
-					bigDecimal=product.getPrice();
+				if (id2 == product.getId()) {
+					bigDecimal = product.getPrice();
 				}
 			}
 
 			products.removeIf(id -> id.getId() == id2);
 
 			cart.setTotalprice(cart.getTotalprice().subtract(bigDecimal));
-			
+
 			for (Product product : products) {
 				log.info("======>" + product.getName());
 			}

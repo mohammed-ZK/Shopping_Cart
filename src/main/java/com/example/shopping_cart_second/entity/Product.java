@@ -1,5 +1,6 @@
 package com.example.shopping_cart_second.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -15,8 +16,10 @@ import org.hibernate.validator.constraints.Range;
 
 @Entity
 @Table(name = "products")
-public class Product {
+public class Product implements Serializable {
 
+	private static final long serialVersionUID = 7156526077883281623L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

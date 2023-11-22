@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,7 @@ public class ProductController {
 
 
 	@PostMapping("/product")
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	public BaseResponse<ProductDto> insert(@RequestBody @Valid Product products) throws ProductException{
 		log.info("=====>1");
 		BaseResponse<ProductDto> baseResponse = productService.insert(products);
@@ -42,7 +43,8 @@ public class ProductController {
 	}
 
 	@GetMapping("/products")
-	@PreAuthorize("hasRole('USER')")
+//	@Cacheable(key = "#root.method" ,value = "findAllProduct")
+//	@PreAuthorize("hasRole('USER')")
 	public BaseResponse<List<ProductDto>> getProducts() {
 		BaseResponse<List<ProductDto>> baseResponse = new BaseResponse<>();
 		baseResponse.setData(productService.getProducts());
@@ -57,7 +59,7 @@ public class ProductController {
 	}
 
 	@DeleteMapping("/products/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	public BaseResponse<Void> deleteProduct(@PathVariable Long id) throws ProductException {
 		return productService.deleteProduct(id);
 	}
