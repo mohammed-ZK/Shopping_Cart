@@ -1,6 +1,6 @@
 package com.example.shopping_cart_second.payload.request;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {
 	@NotBlank(message = "the name is blank")

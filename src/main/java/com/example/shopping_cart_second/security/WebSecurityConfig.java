@@ -1,7 +1,6 @@
 package com.example.shopping_cart_second.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -61,8 +60,8 @@ public class WebSecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth.antMatchers("/api/auth/**").permitAll().antMatchers("/api/test/**")
-						.permitAll().antMatchers("/api/carts/**").permitAll().antMatchers("/**").permitAll()
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll().requestMatchers("/api/test/**")
+						.permitAll().requestMatchers("/api/carts/**").permitAll().requestMatchers("/**").permitAll()
 						.anyRequest().authenticated());
 
 		http.authenticationProvider(authenticationProvider());

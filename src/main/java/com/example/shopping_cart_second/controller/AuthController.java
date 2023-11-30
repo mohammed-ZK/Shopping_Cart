@@ -1,6 +1,5 @@
 package com.example.shopping_cart_second.controller;
 
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +20,8 @@ import com.example.shopping_cart_second.repository.RoleRepository;
 import com.example.shopping_cart_second.repository.UserRepository;
 import com.example.shopping_cart_second.security.jwt.JwtUtils;
 import com.example.shopping_cart_second.security.service.AuthService;
+
+import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

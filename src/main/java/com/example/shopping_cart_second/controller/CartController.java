@@ -2,6 +2,8 @@ package com.example.shopping_cart_second.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,15 +23,20 @@ import com.example.shopping_cart_second.service.CartService;
 
 @RestController
 @RequestMapping("/api/carts")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class CartController {
 
+	
+	private static final Logger log = LoggerFactory.getLogger(CartController.class);
+
+	
 	@Autowired
 	private CartService cartService;
 
 	@PostMapping()
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<BaseResponse<Long>> insert() throws ErrorInInsertException,UserNotFoundException,UserNotAuthenticatedException {
+		log.info("======>error");
 		BaseResponse<Long> baseResponse = new BaseResponse<>();
 		baseResponse.setData(cartService.insert());
 		return ResponseEntity.ok(baseResponse) ;
@@ -53,5 +60,11 @@ public class CartController {
 	public BaseResponse<Void> deleteCart(@PathVariable Long id) throws Exception {
 		cartService.deleteCart(id);
 		return new BaseResponse<>();
+	}
+	
+	@GetMapping("test")
+//	@PreAuthorize("hasRole('USER')")
+	public String getCartIdAndUserId() throws Exception {
+		return "hello";
 	}
 }

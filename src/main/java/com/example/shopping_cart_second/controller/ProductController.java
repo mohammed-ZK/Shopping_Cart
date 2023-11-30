@@ -2,12 +2,9 @@ package com.example.shopping_cart_second.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +21,10 @@ import com.example.shopping_cart_second.dto.ProductDto;
 import com.example.shopping_cart_second.entity.Product;
 import com.example.shopping_cart_second.service.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/cart")
 public class ProductController {
 
 	private static final Logger log = LoggerFactory.getLogger(ProductController.class);

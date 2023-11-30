@@ -69,7 +69,6 @@ public class AuthService {
 		try {
 			Authentication authentication = authenticationManager.authenticate(itemToken);	
 
-
 			log.info("hello found user");
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -19,6 +19,7 @@ import com.example.shopping_cart_second.Exception.UserNotFoundException;
 import com.example.shopping_cart_second.dto.CartDto;
 import com.example.shopping_cart_second.entity.Cart;
 import com.example.shopping_cart_second.entity.ERole;
+import com.example.shopping_cart_second.entity.Order;
 import com.example.shopping_cart_second.entity.Role;
 import com.example.shopping_cart_second.entity.User;
 import com.example.shopping_cart_second.mapper.CartMapper;
@@ -39,6 +40,9 @@ public class CartService {
 	private UserRepository userRepository;
 
 	@Autowired
+	RabbitMQProducer mqProducer;
+
+	@Autowired
 	private JwtUtils jwtUtils;
 
 	private CartMapper cartMapper = new CartMapperImpl();
@@ -47,6 +51,8 @@ public class CartService {
 		Cart cart = new Cart();
 
 		User user = new User();
+
+		Order order = new Order();
 
 		log.info("before Auth get");
 
@@ -63,7 +69,21 @@ public class CartService {
 		if (cartRepository.existsByUser_Id(user.getId())) {
 			throw new UserNotFoundException("The User has a cart");
 		} else {
-			return cartRepository.save(cart).getId();
+
+			log.info("=======>1.0");
+			Long cartId= cartRepository.save(cart).getId();
+
+			log.info("=======>"+cartId);
+			order.setCardId(cartId);
+			log.info("=======>"+order.getCardId());
+			order.setUserId(user.getId());
+			log.info("=======>"+order.getUserId());
+			order.setToken(string);
+			log.info("=======>"+order.getUserId());
+			mqProducer.sendMessage(order);
+
+			log.info("=======>4");
+			return cartId;
 		}
 
 	}
@@ -123,6 +143,18 @@ public class CartService {
 			throw new EmployeeServiceException("The User isn`t Access");
 		}
 
+	}
+
+	public Order getCartIdAndUserId(Long id) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = userRepository.findByUsername(authentication.getName()).get();
+		Long idUser = user.getId();
+
+		Order order = new Order(idUser, id);
+
+		log.debug("user Id is {} and cart Id is {}", idUser, id);
+
+		return order;
 	}
 
 }
